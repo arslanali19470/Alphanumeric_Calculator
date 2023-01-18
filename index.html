@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALPHA22</title>
+</head>
+<style>
+    .calculator {
+        background-color: #222;
+        width: 35%;
+        border-radius: 40px;
+        margin: auto;
+        /* padding: 1rem; */
+        height: 97vh;
+    }
+
+    .history_num {
+        font-size: 20px;
+    }
+
+    .present_ans_num {
+        /* text-align: right; */
+        font-size: 32px;
+        padding-right: 1rem;
+    }
+
+    .history,
+    .present_answer {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        align-items: center;
+        justify-items: start;
+        margin-left: 2rem;
+        color: aliceblue;
+        /* background-color: aqua; */
+    }
+
+    .history {
+        /* background-color: aqua; */
+        height: 3rem;
+        margin-right: 1rem;
+    }
+
+
+    .btn_box {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        height: 60%;
+        /* margin-top: 2rem; */
+        width: 80%;
+        gap: .75rem;
+        margin-left: 2.5rem;
+        /* background-color: red; */
+    }
+
+    .btn_box .btn {
+        height: 4rem;
+        width: 4rem;
+        border-radius: 50%;
+        border: none;
+        /* margin: 10px; */
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .btn_box .btn:hover {
+        background-color: #999;
+    }
+
+    .calculate_now {
+        width: 85%;
+        height: 2.5rem;
+        margin-top: 1rem;
+        margin-left: 1.5rem;
+        cursor: pointer;
+        border-radius: 20px;
+        font-size: 26px;
+        /* background-color: yellow; */
+
+    }
+
+    .calculate_now:hover {
+        background-color: yellowgreen;
+
+    }
+
+    .sign {
+        background-color: coral;
+    }
+
+    .sign:hover {
+        color: #fff;
+    }
+
+    .screen {
+        /* background-color: red; */
+        padding-top: .5rem;
+        height: 9rem;
+        /* border: 2px solid red; */
+    }
+</style>
+
+<body>
+    <section class="calculator">
+        <div class="screen">
+            <div class="history">
+                <p class="history_text"></p>
+                <p class="history_num"></p>
+            </div>
+            <div class="present_answer">
+                <p class="present_ans_text"></p>
+                <p class="present_ans_num"></p>
+            </div>
+
+        </div>
+        <hr>
+        <div class="btn_box">
+            <button class="btn1 btn sign">C</button>
+            <button class="btn1 btn sign">.</button>
+            <button class="btn1 btn sign">%</button>
+            <button class="btn1 btn sign">bk</button>
+            <button class="btn1 btn">1</button>
+            <button class="btn2 btn">2</button>
+            <button class="btn3 btn">3</button>
+            <button class="btn4 btn sign">/</button>
+            <button class="btn5 btn">4</button>
+            <button class="btn6 btn">5</button>
+            <button class="btn7 btn">6</button>
+            <button class="btn8 btn sign">*</button>
+            <button class="btn9 btn">7</button>
+            <button class="btn10 btn ">8</button>
+            <button class="btn11 btn nunn ">9</button>
+            <button class="btn12 btn sign ">-</button>
+            <button class="btn14 btn  sign">(</button>
+            <button class="btn13 btn ">0</button>
+            <button class="btn15 btn sign ">)</button>
+            <button class="btn16 btn  sign">+</button>
+
+        </div>
+        <button class="calculate_now">=</button>
+    </section>
+    <script src="numberToWords.js"></script>
+
+    <script>
+
+
+        // *****************************************************
+        // general data    **************************
+        // *****************************************************
+
+
+        let ones = {
+            0: "zero",
+            1: "one",
+            2: "two",
+            3: "three",
+            4: "four",
+            5: "five",
+            6: "six",
+            7: "seven",
+            8: "eight",
+            9: "nine",
+            10: "ten",
+            11: "eleven",
+            12: "twelve",
+            13: "thirteen",
+            14: "fourteen",
+            15: "fifteen",
+            16: "sixteen",
+            17: "seventeen",
+            18: "eighteen",
+            19: "nineteen",
+        }
+
+        let prefixes = {
+            2: "twenty",
+            3: "thirty",
+            4: "forty",
+            5: "fifty",
+            6: "sixty",
+            7: "seventy",
+            8: "eighty",
+            9: "ninety",
+
+
+        }
+
+
+
+
+
+        // let numberarrays = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"];
+        // *****************************************************
+        // variables **************************************
+        // *****************************************************
+        let btn_box = Array.from(document.querySelectorAll(".btn"));
+        let calculate_now = document.querySelector(".calculate_now");
+        let history_num = document.querySelector(".history_num");
+        let history_text = document.querySelector(".history_text");
+        let present_ans_text = document.querySelector(".present_ans_text");
+        let present_ans_num = document.querySelector(".present_ans_num");
+        let real_btn_box = document.querySelector("btn_box");
+
+        let history_store_text, merg_both_history;
+
+
+        // *****************************************************
+        // *******   loop and adevent listner  *****************
+        // *****************************************************
+
+        for (items of btn_box) {
+            items.addEventListener("click", press);
+
+        }
+        function press(e) {
+            // console.log(e.target.innerText);
+            if (e.target.innerText == "C") {
+                present_ans_num.innerText = " ";
+                history_num.innerText = " ";
+                present_ans_text.innerText = " ";
+                history_text.innerText = " ";
+
+            } else if (e.target.innerText == "bk") {
+                present_ans_num.innerText = present_ans_num.innerText.slice(0, -1);
+                present_ans_text.innerText = " ";
+                history_text.innerText = " ";
+                history_num.innerText = " ";
+            } else {
+                present_ans_num.innerText += e.target.innerText;
+                present_ans_num.style.color = "#eee";
+                present_ans_text.innerText = " ";
+
+
+
+
+
+
+
+                // ===================================================================
+                // ===================================================================
+                if (e.target.innerText == "+") {
+                    history_text.innerText += " + ";
+                    history_num.innerText = present_ans_num.innerText;
+                    present_ans_num.innerText = " ";
+                    history_store_text = history_text.innerText;
+
+                }
+                if (e.target.innerText == "*") {
+                    history_text.innerText += " * ";
+                    history_num.innerText = present_ans_num.innerText;
+                    present_ans_num.innerText = " ";
+                    history_store_text = history_text.innerText;
+
+                }
+                if (e.target.innerText == "/") {
+                    history_text.innerText += " / ";
+                    history_num.innerText = present_ans_num.innerText;
+                    present_ans_num.innerText = " ";
+                    history_store_text = history_text.innerText;
+
+                }
+                if (e.target.innerText == "-") {
+                    history_text.innerText += " - ";
+                    history_num.innerText = present_ans_num.innerText;
+                    present_ans_num.innerText = " ";
+                    history_store_text = history_text.innerText;
+
+                }
+                // ===================================================================
+                // ===================================================================
+
+
+
+
+                // history_text.innerText += e.target.innerText;
+
+                if (present_ans_num.innerText in ones) {
+                    history_text.innerText = ones[present_ans_num.innerText];
+                }
+
+
+                // ...............................................
+
+
+                let numarray = present_ans_num.innerText.split("");
+                if (present_ans_num.innerText.length == 2 && present_ans_num.innerText > 19) {
+                    if ([numarray[1]] == 0) {
+                        history_text.innerText = prefixes[numarray[0]];
+                    } else {
+
+                        history_text.innerText = prefixes[numarray[0]] + " " + ones[numarray[1]];
+                    }
+                };
+
+
+                // ...............................................
+
+                if (present_ans_num.innerText.length == 3) {
+                    if (numarray[1] == 0) {
+                        history_text.innerText = ones[numarray[0]] + " hundred " + " " + ones[numarray[2]];
+                        // history_text.innerText = ones[numarray[0]];
+                    }
+                    else if (numarray[1] < 2) {
+                        history_text.innerText = ones[numarray[0]] + " hundred " + " " + ones[+([numarray[1], numarray[2]]).join("")];
+                    } else {
+                        history_text.innerText = ones[numarray[0]] + " hundred " + prefixes[numarray[1]] + "-" + ones[numarray[2]];
+                    }
+
+                }
+
+                // ...............................................
+
+                if (present_ans_num.innerText.length == 4) {
+                    if (numarray[1] == 0) {
+                        history_text.innerText = ones[numarray[0]] + " thousand " + " " + ones[+([numarray[2], numarray[3]]).join("")];
+                        // history_text.innerText = ones[numarray[0]];
+                    }
+                    else if (numarray[1] < 2) {
+                        history_text.innerText = ones[numarray[0]] + " thousand " + ones[numarray[1]] + " hundred " + " " + ones[+([numarray[2], numarray[3]]).join("")];
+                    } else {
+                        history_text.innerText = ones[numarray[0]] + " thousand " + ones[numarray[1]] + " hundred " + prefixes[numarray[2]] + " " + ones[numarray[3]];
+                    }
+
+                }
+
+
+
+
+            }
+
+        }
+
+
+
+        // *****************************************************
+        // equal (=) sign working     **************************
+        // *****************************************************
+        calculate_now.addEventListener("click", function () {
+            history_num.innerText += present_ans_num.innerText;
+            present_ans_num.innerText = eval(history_num.innerText);
+            present_ans_num.style.color = "yellowgreen";
+            present_ans_num.style.fontSize = "40px";
+            present_ans_text.innerText = `Answer: ${numberToWords.toWords(present_ans_num.innerText)}`;
+            merg_both_history = history_store_text + " " + history_text.innerText;
+            history_text.innerText = merg_both_history;
+        })
+
+
+
+
+        // **************************************************
+
+
+
+
+
+
+
+        // .................................................................
+        // .................................................................
+        // .................................................................
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
